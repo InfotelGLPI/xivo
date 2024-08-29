@@ -26,9 +26,12 @@
  * -------------------------------------------------------------------------
  */
 
+.xivo_marg {
+   margin: -1% 5%;
+}
 .xivo_config {
    text-align: left;
-   width: 950px;
+   width: 75%;
    margin: 0 auto;
 }
 
@@ -47,9 +50,9 @@
 }
 
 .xivo_field {
-   margin: 10px 0 30px 0;
+   margin: 2% 2% 5% 0;
    position: relative;
-   height: 20px;
+   height: 30px;
    text-align: left;
 }
 
@@ -67,7 +70,7 @@
 .xivo_field .xivo_input,
 .xivo_field .select2-container {
    position: absolute;
-   top: 0;
+   top: 6px;
    left: 10px;
    border-radius: 0;
    left: 0;
@@ -75,6 +78,18 @@
    height: 25px;
    padding: 0 5px;
 }
+
+.xivo_field.dropdown_xivo .xivo_input,
+.xivo_field.dropdown_xivo .select2-container {
+   position: initial !important;
+   height: auto !important;
+}
+
+.xivo_label_dropdown{
+   top : -25px !important;
+}
+
+
 .xivo_field .xivo_input {
    background-color: transparent;
    border: 0 solid #CCC;
