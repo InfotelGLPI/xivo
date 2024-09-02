@@ -28,6 +28,12 @@
  * -------------------------------------------------------------------------
  */
 
+if (!defined("PLUGIN_XIVO_DIR")) {
+    define("PLUGIN_XIVO_DIR", Plugin::getPhpDir("xivo"));
+    define("PLUGIN_XIVO_NOTFULL_DIR", Plugin::getPhpDir("xivo", false));
+    define("PLUGIN_XIVO_WEBDIR", Plugin::getWebDir("xivo"));
+}
+
 define('PLUGIN_XIVO_VERSION', '1.0.0');
 
 // Minimal GLPI version, inclusive

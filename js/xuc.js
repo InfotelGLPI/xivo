@@ -111,12 +111,14 @@ var Xuc = function() {
    };
 
    my_xuc.initAgentForm = function() {
-      $("#c_preference ul #preferences_link")
-         .after("<li id='xivo_agent'>\
+      $(".navbar.d-print-none .container-fluid.flex-xl-nowrap .ms-lg-auto.flex-grow-1.flex-lg-grow-0")
+         .after("\
+                <div id='xivo_agent' class='ms-md-4 d-none d-lg-block'>\
                   <a class='fa fa-phone' id='xivo_agent_button'></a>\
                   <i class='fa fa-circle' id='xivo_agent_status'></i>\
                   <div id='xivo_agent_form'>empty</div>\
-                </li>");
+                </div>\
+             ");
 
       $(document)
          .on("click", "#xivo_agent_button", function() {

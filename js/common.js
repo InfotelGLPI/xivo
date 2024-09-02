@@ -35,6 +35,7 @@ $(function() {
           || val === true) {
          that.show();
          $(that).find('[_required]').prop('required', true);
+         $(that).find('.is_required').prop('required', true);
       } else {
          that.hide();
          $(that).find('[required]').prop('required', false).attr('_required', 'true');

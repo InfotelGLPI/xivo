@@ -104,6 +104,7 @@ class PluginXivoConfig extends Config {
                 'name'         => 'xuc_url',
                 'value'        => $current_config['xuc_url'],
                 'placeholder'  => 'https://xup_ip:8090',
+                'class'        => "is_required xivo_input",
             ]
         ]);
         echo self::showField([
@@ -198,7 +199,7 @@ class PluginXivoConfig extends Config {
             'attrs'     => [
                 'name'      => 'import_assets',
                 'value'     => $current_config['import_assets'],
-                'on_change' => '$("#import_assets").toggleFromValue(this.value);',
+                'on_change' => '$("#import_assets").toggleFromValue(this.value);'
             ]
         ]);
         echo "</div>";
@@ -216,6 +217,7 @@ class PluginXivoConfig extends Config {
                 'name'        => 'api_url',
                 'value'       => $current_config['api_url'],
                 'placeholder' => 'https://...',
+                'class'     => "is_required xivo_input",
                 'style' => 'width:285px;',
             ]
         ]);
@@ -225,7 +227,7 @@ class PluginXivoConfig extends Config {
             'label'     => __("Check certificate"),
             'attrs'     => [
                 'name'  => 'api_ssl_check',
-                'value' => $current_config['api_ssl_check'],
+                'value' => $current_config['api_ssl_check']
             ]
         ]);
         echo "</div>"; // .inline_fields
@@ -238,7 +240,9 @@ class PluginXivoConfig extends Config {
             'attrs' => [
                 'name'  => 'api_username',
                 'value' => $current_config['api_username'],
+                'class'     => "is_required xivo_input",
                 'style' => 'width:90%;',
+
             ]
         ]);
         echo self::showField([
@@ -248,6 +252,7 @@ class PluginXivoConfig extends Config {
             'attrs'     => [
                 'name'  => 'api_password',
                 'value' => $current_config['api_password'],
+                'class'     => "is_required xivo_input",
                 'style' => 'width:90%;',
             ]
         ]);
@@ -426,15 +431,10 @@ class PluginXivoConfig extends Config {
                 'style'       => 'width:50%;',
                 'id'          => "xivoconfig_field_$rand",
                 'class'       => 'xivo_input',
-                'required'    => 'required',
                 'on_change'   => ''
             ]
         ];
         $options = array_replace_recursive($default_options, $options);
-
-        if (isset($options['attrs']['required'])) {
-            $options['attrs']['_required'] = $options['attrs']['required'];
-        }
 
         $out   = "";
         $width = "";
