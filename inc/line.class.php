@@ -32,18 +32,15 @@ if (!defined('GLPI_ROOT')) {
     die("Sorry. You can't access this file directly");
 }
 
-class PluginXivoLine extends CommonDBTM
-{
+class PluginXivoLine extends CommonDBTM {
     static $rightname = 'phone';
     public $dohistory = true;
 
-    static function getTypeName($nb = 0)
-    {
+    static function getTypeName($nb = 0) {
         return _n("Line", "Lines", $nb, 'xivo');
     }
 
-    function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
-    {
+    function getTabNameForItem(CommonGLPI $item, $withtemplate = 0) {
         switch ($item->getType()) {
             case "Line":
                 $nb = 0;
@@ -55,8 +52,7 @@ class PluginXivoLine extends CommonDBTM
         return '';
     }
 
-    static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
-    {
+    static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0) {
         switch ($item->getType()) {
             case "Line":
                 return self::showForLine($item, $withtemplate);
@@ -68,16 +64,15 @@ class PluginXivoLine extends CommonDBTM
     /**
      * Import a single line into GLPI
      *
-     * @param array $line the line to import
+     * @param  array  $line the line to import
      * @return mixed the line id (integer) or false
      */
-    static function importSingle($line = [])
-    {
-        $xivoconfig = PluginXivoConfig::getConfig();
-        $gline = new Line;
-        $xline = new self;
-        $x_lines_id = false;
-        $g_lines_id = false;
+    static function importSingle($line = []) {
+        $xivoconfig  = PluginXivoConfig::getConfig();
+        $gline       = new Line;
+        $xline       = new self;
+        $x_lines_id  = false;
+        $g_lines_id  = false;
 
         $xline->getFromDBByCrit([
             'xivo_line_id' => $line['id']
@@ -88,20 +83,20 @@ class PluginXivoLine extends CommonDBTM
         }
 
         $input_xline = [
-            'protocol' => $line['protocol'],
+            'protocol'               => $line['protocol'],
             'provisioning_extension' => $line['provisioning_extension'],
-            'provisioning_code' => $line['provisioning_code'],
-            'device_slot' => $line['device_slot'],
-            'context' => $line['context'],
-            'position' => $line['position'],
-            'registrar' => $line['registrar'],
-            'xivo_line_id' => $line['id'],
-            'lines_id' => $g_lines_id,
+            'provisioning_code'      => $line['provisioning_code'],
+            'device_slot'            => $line['device_slot'],
+            'context'                => $line['context'],
+            'position'               => $line['position'],
+            'registrar'              => $line['registrar'],
+            'xivo_line_id'           => $line['id'],
+            'lines_id'               => $g_lines_id > 0 ? $g_lines_id:0,
         ];
         $input_gline = [
-            'name' => $line['name'],
-            'caller_num' => $line['caller_id_num'],
-            'caller_name' => $line['caller_id_name'],
+            'name'                   => $line['caller_id_name'],
+            'caller_num'             => $line['caller_id_num'],
+            'caller_name'            => $line['name'],
         ];
 
         if (isset($line['glpi_users_id'])) {
@@ -114,6 +109,7 @@ class PluginXivoLine extends CommonDBTM
 
             $input_xline['id'] = $x_lines_id;
             $xline->update($input_xline);
+
         } else {
             $input_gline['entities_id'] = $xivoconfig['default_entity'];
             $g_lines_id = $gline->add($input_gline);
@@ -125,8 +121,7 @@ class PluginXivoLine extends CommonDBTM
         return $g_lines_id;
     }
 
-    static function showForLine(Line $line)
-    {
+    static function showForLine(Line $line) {
         $ID = 0;
         $options = [];
         $xline = new self;
@@ -146,40 +141,40 @@ class PluginXivoLine extends CommonDBTM
         $xline->showFormHeader($options);
 
         echo "<tr class='tab_bg_1'>";
-        echo "<td>" . __('Protocol', 'xivo') . "</td>";
+        echo "<td>".__('Protocol', 'xivo')."</td>";
         echo "<td>";
         echo Html::input('protocol', ['value' => $xline->fields['protocol']]);
         echo "</td>";
-        echo "<td>" . __('Xivo line_id', 'xivo') . "</td>";
+        echo "<td>".__('Xivo line_id', 'xivo')."</td>";
         echo "<td>";
         echo Html::input('line_id', ['value' => $xline->fields['xivo_line_id']]);
         echo "</td>";
         echo "</tr>";
 
         echo "<tr class='tab_bg_1'>";
-        echo "<td>" . __('Provisioning extension', 'xivo') . "</td>";
+        echo "<td>".__('Provisioning extension', 'xivo')."</td>";
         echo "<td>";
         echo Html::input('provisioning_extension', ['value' => $xline->fields['provisioning_extension']]);
         echo "</td>";
-        echo "<td>" . __('Provisioning code', 'xivo') . "</td>";
+        echo "<td>".__('Provisioning code', 'xivo')."</td>";
         echo "<td>";
         echo Html::input('provisioning_code', ['value' => $xline->fields['provisioning_code']]);
         echo "</td>";
         echo "</tr>";
 
         echo "<tr class='tab_bg_1'>";
-        echo "<td>" . __('Device slot', 'xivo') . "</td>";
+        echo "<td>".__('Device slot', 'xivo')."</td>";
         echo "<td>";
         Dropdown::showNumber('device_slot', $xline->fields['device_slot'], 0, 100, 1, []);
         echo "</td>";
-        echo "<td>" . __('Position', 'xivo') . "</td>";
+        echo "<td>".__('Position', 'xivo')."</td>";
         echo "<td>";
         Dropdown::showNumber('position', $xline->fields['position'], 0, 100, 1, []);
         echo "</td>";
         echo "</tr>";
 
         echo "<tr class='tab_bg_1'>";
-        echo "<td>" . __('Registrar', 'xivo') . "</td>";
+        echo "<td>".__('Registrar', 'xivo')."</td>";
         echo "<td>";
         echo Html::input('registrar', ['value' => $xline->fields['registrar']]);
         echo "</td>";
@@ -191,21 +186,20 @@ class PluginXivoLine extends CommonDBTM
         return true;
     }
 
-    static function getAddSearchOptions($itemtype = '')
-    {
+    static function getAddSearchOptions($itemtype = '') {
         $options = [];
-        $index = 95120;
+        $index   = 95120;
 
         switch ($itemtype) {
             case "Phone":
                 $options[$index] = [
-                    'table' => "glpi_lines",
-                    'field' => 'name',
-                    'name' => __('Associated lines', 'xivo'),
-                    'datatype' => 'itemlink',
-                    'forcegroupby' => true,
+                    'table'         => "glpi_lines",
+                    'field'         => 'name',
+                    'name'          => __('Associated lines', 'xivo'),
+                    'datatype'      => 'itemlink',
+                    'forcegroupby'  => true,
                     'massiveaction' => true,
-                    'joinparams' => [
+                    'joinparams'    => [
                         'beforejoin' => [
                             'table' => 'glpi_plugin_xivo_phones_lines',
                             'joinparams' => [
@@ -219,57 +213,57 @@ class PluginXivoLine extends CommonDBTM
 
             case 'Line':
                 $options[$index] = [
-                    'table' => self::getTable(),
-                    'field' => 'protocol',
-                    'name' => __('Protocol', 'xivo'),
+                    'table'    => self::getTable(),
+                    'field'    => 'protocol',
+                    'name'     => __('Protocol', 'xivo'),
                     'datatype' => 'text'
                 ];
                 $index++;
 
                 $options[$index] = [
-                    'table' => self::getTable(),
-                    'field' => 'provisioning_extension',
-                    'name' => __('Provisioning extension', 'xivo'),
+                    'table'    => self::getTable(),
+                    'field'    => 'provisioning_extension',
+                    'name'     => __('Provisioning extension', 'xivo'),
                     'datatype' => 'text'
                 ];
                 $index++;
 
                 $options[$index] = [
-                    'table' => self::getTable(),
-                    'field' => 'provisioning_code',
-                    'name' => __('Provisioning code', 'xivo'),
+                    'table'    => self::getTable(),
+                    'field'    => 'provisioning_code',
+                    'name'     => __('Provisioning code', 'xivo'),
                     'datatype' => 'text'
                 ];
                 $index++;
 
                 $options[$index] = [
-                    'table' => self::getTable(),
-                    'field' => 'device_slot',
-                    'name' => __('Device slot', 'xivo'),
+                    'table'    => self::getTable(),
+                    'field'    => 'device_slot',
+                    'name'     => __('Device slot', 'xivo'),
                     'datatype' => 'integer'
                 ];
                 $index++;
 
                 $options[$index] = [
-                    'table' => self::getTable(),
-                    'field' => 'position',
-                    'name' => __('Position', 'xivo'),
+                    'table'    => self::getTable(),
+                    'field'    => 'position',
+                    'name'     => __('Position', 'xivo'),
                     'datatype' => 'integer'
                 ];
                 $index++;
 
                 $options[$index] = [
-                    'table' => self::getTable(),
-                    'field' => 'registrar',
-                    'name' => __('Registrar', 'xivo'),
+                    'table'    => self::getTable(),
+                    'field'    => 'registrar',
+                    'name'     => __('Registrar', 'xivo'),
                     'datatype' => 'text'
                 ];
                 $index++;
 
                 $options[$index] = [
-                    'table' => self::getTable(),
-                    'field' => 'line_id',
-                    'name' => __('Xivo line_id', 'xivo'),
+                    'table'    => self::getTable(),
+                    'field'    => 'line_id',
+                    'name'     => __('Xivo line_id', 'xivo'),
                     'datatype' => 'text'
                 ];
                 $index++;
@@ -285,36 +279,28 @@ class PluginXivoLine extends CommonDBTM
      * @param Migration $migration
      * @return boolean True on success
      */
-    static function install(Migration $migration)
-    {
+    static function install(Migration $migration) {
         global $DB;
-
-        $default_charset = DBConnection::getDefaultCharset();
-        $default_collation = DBConnection::getDefaultCollation();
-        $default_key_sign = DBConnection::getDefaultPrimaryKeySignOption();
-
-
 
         $table = self::getTable();
         if (!$DB->tableExists($table)) {
             $migration->displayMessage(sprintf(__("Installing %s"), $table));
 
-
             $query = "CREATE TABLE `$table` (
-                  `id`                     INT {$default_key_sign} NOT NULL auto_increment,
-                  `lines_id`               INT {$default_key_sign} NOT NULL DEFAULT 0,
+                  `id`                     INT(11) NOT NULL auto_increment,
+                  `lines_id`               INT(11) NOT NULL DEFAULT 0,
                   `protocol`               VARCHAR(25) NOT NULL DEFAULT '',
                   `provisioning_extension` VARCHAR(25) NOT NULL DEFAULT '',
                   `provisioning_code`      VARCHAR(25) NOT NULL DEFAULT '',
-                  `device_slot`            INT NOT NULL DEFAULT 0,
+                  `device_slot`            INT(11) NOT NULL DEFAULT 0,
                   `contect`                VARCHAR(25) NOT NULL DEFAULT '',
-                  `position`               INT NOT NULL DEFAULT 0,
+                  `position`               INT(11) NOT NULL DEFAULT 0,
                   `registrar`              VARCHAR(50) NOT NULL DEFAULT '',
                   `xivo_line_id`           VARCHAR(255) NOT NULL DEFAULT '',
                   PRIMARY KEY        (`id`),
                   KEY `lines_id`     (`lines_id`)
-               ) ENGINE=InnoDB  DEFAULT CHARSET={$default_charset} COLLATE={$default_collation} ROW_FORMAT=DYNAMIC;";
-            $DB->doQuery($query) or die ($DB->error());
+               ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;";
+            $DB->query($query) or die ($DB->error());
         }
 
         // migrate to core tables
@@ -326,14 +312,14 @@ class PluginXivoLine extends CommonDBTM
             $xivo_lines = $DB->request("glpi_plugin_xivo_lines");
             foreach ($xivo_lines as $xivo_line) {
                 $new_lines[$xivo_line['id']] = $line->add([
-                    'name' => $xivo_line['name'],
-                    'entities_id' => $xivo_line['entities_id'],
+                    'name'         => $xivo_line['caller_id_name'],
+                    'entities_id'  => $xivo_line['entities_id'],
                     'is_recursive' => $xivo_line['is_recursive'],
-                    'is_deleted' => $xivo_line['is_deleted'],
-                    'caller_num' => $xivo_line['caller_id_num'],
-                    'caller_name' => $xivo_line['caller_id_name'],
-                    'users_id' => $xivo_line['users_id'],
-                    'comment' => $xivo_line['comment']
+                    'is_deleted'   => $xivo_line['is_deleted'],
+                    'caller_num'   => $xivo_line['caller_id_num'],
+                    'caller_name'  => $xivo_line['name'],
+                    'users_id'     => $xivo_line['users_id'],
+                    'comment'      => $xivo_line['comment']
                 ]);
             }
 
@@ -347,22 +333,13 @@ class PluginXivoLine extends CommonDBTM
             $migration->dropField('glpi_plugin_xivo_lines', 'users_id');
             $migration->dropField('glpi_plugin_xivo_lines', 'comment');
             $migration->dropField('glpi_plugin_xivo_lines', 'date_mod');
-            $migration->addField(
-                'glpi_plugin_xivo_lines',
-                'lines_id',
-                "INT {$default_key_sign} NOT NULL DEFAULT 0",
-                ['after' => 'id']
-            );
+            $migration->addField('glpi_plugin_xivo_lines', 'lines_id', 'integer', ['after' => 'id']);
             $migration->changeField('glpi_plugin_xivo_lines', 'line_id', 'xivo_line_id', 'string');
             $migration->migrationOneTable('glpi_plugin_xivo_lines');
 
             // migrate phone_lines
-            $migration->addField(
-                'glpi_plugin_xivo_phones_lines',
-                'lines_id',
-                "INT {$default_key_sign} NOT NULL DEFAULT 0",
-                ['after' => 'plugin_xivo_lines_id']
-            );
+            $migration->addField('glpi_plugin_xivo_phones_lines', 'lines_id', 'integer',
+                ['after' => 'plugin_xivo_lines_id']);
             $migration->dropKey('glpi_plugin_xivo_phones_lines', 'unicity');
             $migration->addKey('glpi_plugin_xivo_phones_lines', ['phones_id', 'lines_id'], 'unicity', 'UNIQUE');
             $migration->migrationOneTable('glpi_plugin_xivo_phones_lines');
@@ -379,39 +356,25 @@ class PluginXivoLine extends CommonDBTM
 
             // migrate foreign key data
             foreach ($new_lines as $xivo_lines_id => $lines_id) {
-                $DB->doQuery(
-                    "UPDATE glpi_plugin_xivo_lines
-                       SET lines_id = $lines_id WHERE id = $xivo_lines_id"
-                );
-                $DB->doQuery(
-                    "UPDATE glpi_plugin_xivo_phones_lines
-                        SET lines_id = $lines_id WHERE plugin_xivo_lines_id = $xivo_lines_id"
-                );
-                $DB->doQuery(
-                    "UPDATE glpi_contracts_items
+                $DB->query("UPDATE glpi_plugin_xivo_lines
+                       SET lines_id = $lines_id WHERE id = $xivo_lines_id");
+                $DB->query("UPDATE glpi_plugin_xivo_phones_lines
+                        SET lines_id = $lines_id WHERE plugin_xivo_lines_id = $xivo_lines_id");
+                $DB->query("UPDATE glpi_contracts_items
                         SET items_id = $lines_id
-                        WHERE items_id = $xivo_lines_id AND itemtype = 'PluginXivoLine'"
-                );
-                $DB->doQuery(
-                    "UPDATE glpi_infocoms
+                        WHERE items_id = $xivo_lines_id AND itemtype = 'PluginXivoLine'");
+                $DB->query("UPDATE glpi_infocoms
                         SET items_id = $lines_id
-                        WHERE items_id = $xivo_lines_id AND itemtype = 'PluginXivoLine'"
-                );
-                $DB->doQuery(
-                    "UPDATE glpi_documents_items
+                        WHERE items_id = $xivo_lines_id AND itemtype = 'PluginXivoLine'");
+                $DB->query("UPDATE glpi_documents_items
                         SET items_id = $lines_id
-                        WHERE items_id = $xivo_lines_id AND itemtype = 'PluginXivoLine'"
-                );
-                $DB->doQuery(
-                    "UPDATE glpi_notepads
+                        WHERE items_id = $xivo_lines_id AND itemtype = 'PluginXivoLine'");
+                $DB->query("UPDATE glpi_notepads
                         SET items_id = $lines_id
-                        WHERE items_id = $xivo_lines_id AND itemtype = 'PluginXivoLine'"
-                );
-                $DB->doQuery(
-                    "UPDATE glpi_logs
+                        WHERE items_id = $xivo_lines_id AND itemtype = 'PluginXivoLine'");
+                $DB->query("UPDATE glpi_logs
                         SET items_id = $lines_id
-                        WHERE items_id = $xivo_lines_id AND itemtype = 'PluginXivoLine'"
-                );
+                        WHERE items_id = $xivo_lines_id AND itemtype = 'PluginXivoLine'");
             }
 
             $migration->dropField('glpi_plugin_xivo_phones_lines', 'plugin_xivo_lines_id');
@@ -428,11 +391,16 @@ class PluginXivoLine extends CommonDBTM
      *
      * @return boolean True on success
      */
-    static function uninstall()
-    {
+    static function uninstall() {
         global $DB;
-        $DB->doQuery("DROP TABLE IF EXISTS `" . self::getTable() . "`");
+        $DB->query("DROP TABLE IF EXISTS `".self::getTable()."`");
 
         return true;
+    }
+
+    static function linePurged(Line $line)
+    {
+        $xivoline = new self;
+        return $xivoline->deleteByCriteria(['lines_id' => $line->getID()]);
     }
 }

@@ -146,13 +146,15 @@ class PluginXivoPhone extends CommonDBTM
                 $netport = end($found_netports);
                 if (isset($netport['networknames'])) {
                     $net_input['id'] = $netport['id'];
-                    $net_input['NetworkName_id'] = $netport['networknames'][0]['id'];
-                    if (isset($netport['networknames'][0]['ipaddresses'][0]['id'])) {
-                        $net_input['NetworkName__ipaddresses'] = [
-                            $netport['networknames'][0]['ipaddresses'][0]['id'] => $device['ip']
-                        ];
+                    if (isset($netport['networknames'][0]['id'])) {
+                        $net_input['NetworkName_id'] = $netport['networknames'][0]['id'];
+                        if (isset($netport['networknames'][0]['ipaddresses'][0]['id'])) {
+                            $net_input['NetworkName__ipaddresses'] = [
+                                $netport['networknames'][0]['ipaddresses'][0]['id'] => $device['ip']
+                            ];
+                        }
+                        $networkport->update($net_input);
                     }
-                    $networkport->update($net_input);
                 }
             }
         }
@@ -279,7 +281,7 @@ class PluginXivoPhone extends CommonDBTM
                   OR net.`mac` = '{$device['mac']}'
                   OR xivo.`xivo_id` = '{$device['id']}'
                 ORDER BY phone.`id` ASC";
-        $result = $DB->doQuery($query);
+        $result = $DB->query($query);
 
         if ($DB->numrows($result) >= 1) {
             return $DB->result($result, 0, 'id');
@@ -351,30 +353,21 @@ class PluginXivoPhone extends CommonDBTM
     {
         global $DB;
 
-        $default_charset = DBConnection::getDefaultCharset();
-        $default_collation = DBConnection::getDefaultCollation();
-        $default_key_sign = DBConnection::getDefaultPrimaryKeySignOption();
-
-
-
         $table = self::getTable();
         if (!$DB->tableExists($table)) {
             $migration->displayMessage(sprintf(__("Installing %s"), $table));
 
-            $default_charset = DBConnection::getDefaultCharset();
-            $default_collation = DBConnection::getDefaultCollation();
-
             $query = "CREATE TABLE `$table` (
-                  `id`                INT {$default_key_sign}  NOT NULL auto_increment,
-                  `phones_id`         INT {$default_key_sign}  NOT NULL,
+                  `id`                INT(11) NOT NULL auto_increment,
+                  `phones_id`         INT(11) NOT NULL,
                   `xivo_id`           VARCHAR(255) NOT NULL DEFAULT '',
                   `template`          VARCHAR(255) NOT NULL DEFAULT '',
-                  `date_mod`          TIMESTAMP NULL DEFAULT NULL,
+                  `date_mod`          DATETIME DEFAULT NULL,
                   PRIMARY KEY     (`id`),
                   KEY `phones_id` (`phones_id`),
                   KEY `xivo_id`   (`xivo_id`)
-               ) ENGINE=InnoDB  DEFAULT CHARSET={$default_charset} COLLATE={$default_collation} ROW_FORMAT=DYNAMIC;";
-            $DB->doQuery($query) or die ($DB->error());
+               ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;";
+            $DB->query($query) or die ($DB->error());
         }
 
         return true;
@@ -388,7 +381,7 @@ class PluginXivoPhone extends CommonDBTM
     static function uninstall()
     {
         global $DB;
-        $DB->doQuery("DROP TABLE IF EXISTS `" . self::getTable() . "`");
+        $DB->query("DROP TABLE IF EXISTS `" . self::getTable() . "`");
 
         return true;
     }

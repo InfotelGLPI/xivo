@@ -87,44 +87,51 @@ class PluginXivoAPIClient extends CommonGLPI {
             'limit' => 1
          ]
       ]);
-      $device_id = is_array($device) ? end($device['items'])['id'] : false;
+      $device_id = is_array($device) ? end($device['items'])['id'] : 0;
       $line = $this->getLines([
          'query' => [
             'limit' => 1
          ]
       ]);
-      $line_id = is_array($line) ? end($line['items'])['id'] : false;
+      $line_id = is_array($line) ? end($line['items'])['id'] : 0;
 
-      return [
-         __('REST API access', 'xivo')
-            => !empty($this->auth_token),
-         __('Get phone devices', 'xivo')." (confd.devices.read)"
-            => is_array($device),
-         __('Get single device', 'xivo')." (confd.devices.#.read)"
-            => is_array($this->getSingleDevice($device_id, [
-               'query' => [
-                  'limit' => 1
-               ]
-            ])) && is_array($this->getSingleDeviceLines($device_id, [
-               'query' => [
-                  'limit' => 1
-               ]
-            ])),
-         __('Get lines', 'xivo')." (confd.lines.read)"
-            => is_array($line),
-         __('Get single line', 'xivo')." (confd.lines.#.read)"
-            => is_array($this->getSingleLine($line_id, [
-               'query' => [
-                  'limit' => 1
-               ]
-            ])),
-         __('Get users', 'xivo')." (confd.users.read)"
-            => is_array($this->getUsers([
-               'query' => [
-                  'limit' => 1
-               ]
-            ] )),
-      ];
+      if(empty($this->auth_token)){
+          echo "<p>" . __("Connection error, please use debug mod or call an admin", 'xivo') . "</p>";
+          return false;
+      }else{
+          return [
+              __('REST API access', 'xivo')
+              => !empty($this->auth_token) ,
+              __('Get phone devices', 'xivo')." (confd.devices.read)"
+              => is_array($device),
+              __('Get single device', 'xivo')." (confd.devices.#.read)"
+              => is_array($this->getSingleDevice($device_id, [
+                      'query' => [
+                          'limit' => 1
+                      ]
+                  ])) && is_array($this->getSingleDeviceLines($device_id, [
+                      'query' => [
+                          'limit' => 1
+                      ]
+                  ])),
+              __('Get lines', 'xivo')." (confd.lines.read)"
+              => is_array($line),
+              __('Get single line', 'xivo')." (confd.lines.#.read)"
+              => is_array($this->getSingleLine($line_id, [
+                  'query' => [
+                      'limit' => 1
+                  ]
+              ])),
+              __('Get users', 'xivo')." (confd.users.read)"
+              => is_array($this->getUsers([
+                  'query' => [
+                      'limit' => 1
+                  ]
+              ] )),
+          ];
+      }
+
+
    }
 
 

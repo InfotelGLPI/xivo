@@ -28,6 +28,8 @@
  * -------------------------------------------------------------------------
  */
 
+use Glpi\Plugin\Hooks;
+
 if (!defined("PLUGIN_XIVO_DIR")) {
     define("PLUGIN_XIVO_DIR", Plugin::getPhpDir("xivo"));
     define("PLUGIN_XIVO_NOTFULL_DIR", Plugin::getPhpDir("xivo", false));
@@ -46,7 +48,7 @@ define('PLUGIN_XIVO_ENABLE_PRESENCE', '1');
 define('PLUGIN_XIVO_ENABLE_CALLCENTER', '0');
 
 if (!defined("PLUGINXIVO_DIR")) {
-   define("PLUGINXIVO_DIR", __DIR__);
+    define("PLUGINXIVO_DIR", __DIR__);
 }
 
 /**
@@ -55,61 +57,67 @@ if (!defined("PLUGINXIVO_DIR")) {
  *
  * @return void
  */
-function plugin_init_xivo() {
-   global $PLUGIN_HOOKS;
+function plugin_init_xivo()
+{
+    global $PLUGIN_HOOKS;
 
-   $PLUGIN_HOOKS['csrf_compliant']['xivo'] = true;
+    $PLUGIN_HOOKS['csrf_compliant']['xivo'] = true;
 
-   // don't load hooks if plugin not enabled (or glpi not logged)
-   if (!Plugin::isPluginActive('xivo') || !Session::getLoginUserID()) {
-      return true;
-   }
+    // don't load hooks if plugin not enabled (or glpi not logged)
+    if (!Plugin::isPluginActive('xivo') || !Session::getLoginUserID()) {
+        return true;
+    }
 
-   //get plugin config
-   $xivoconfig = PluginXivoConfig::getConfig();
+    //get plugin config
+    $xivoconfig = PluginXivoConfig::getConfig();
 
-   // config page
-   Plugin::registerClass('PluginXivoConfig', ['addtabon' => 'Config']);
-   $PLUGIN_HOOKS['config_page']['xivo'] = 'front/config.form.php';
+    // config page
+    Plugin::registerClass('PluginXivoConfig', ['addtabon' => 'Config']);
+    $PLUGIN_HOOKS['config_page']['xivo'] = 'front/config.form.php';
 
-   // additional tabs
-   Plugin::registerClass('PluginXivoPhone_Line',
-                         ['addtabon' => ['Phone', 'Line']]);
+    // additional tabs
+    Plugin::registerClass(
+        'PluginXivoPhone_Line',
+        ['addtabon' => ['Phone', 'Line']]
+    );
 
-   // add Line to GLPI types
-   Plugin::registerClass('PluginXivoLine',
-                         ['addtabon' => 'Line']);
+    // add Line to GLPI types
+    Plugin::registerClass(
+        'PluginXivoLine',
+        ['addtabon' => 'Line']
+    );
 
-   // css & js
-   $PLUGIN_HOOKS['add_css']['xivo'] = [
-      'css/animation.css',
-      'css/main.css'
-   ];
+    // css & js
+    $PLUGIN_HOOKS['add_css']['xivo'] = [
+        'css/animation.css',
+        'css/main.css'
+    ];
 
-   $PLUGIN_HOOKS['add_javascript']['xivo'] = [
-      'js/common.js',
-   ];
-   if ($xivoconfig['enable_xuc']
-       && ($_SESSION['glpiactiveprofile']['interface'] == "central"
-           || $xivoconfig['enable_xuc_selfservice'])) {
-      $PLUGIN_HOOKS['add_javascript']['xivo'][] = 'js/xivo/callback.js';
-      $PLUGIN_HOOKS['add_javascript']['xivo'][] = 'js/xivo/membership.js';
-      $PLUGIN_HOOKS['add_javascript']['xivo'][] = 'js/xivo/cti.js';
-      $PLUGIN_HOOKS['add_javascript']['xivo'][] = 'js/store2.min.js';
-      $PLUGIN_HOOKS['add_javascript']['xivo'][] = 'js/sessionStorageTabs.js';
-      $PLUGIN_HOOKS['add_javascript']['xivo'][] = 'js/xuc.js';
-      $PLUGIN_HOOKS['add_javascript']['xivo'][] = 'js/app.js.php';
-   }
+    $PLUGIN_HOOKS['add_javascript']['xivo'] = [
+        'js/common.js',
+    ];
+    if ($xivoconfig['enable_xuc']
+        && ($_SESSION['glpiactiveprofile']['interface'] == "central"
+            || $xivoconfig['enable_xuc_selfservice'])) {
+        $PLUGIN_HOOKS['add_javascript']['xivo'][] = 'js/xivo/callback.js';
+        $PLUGIN_HOOKS['add_javascript']['xivo'][] = 'js/xivo/membership.js';
+        $PLUGIN_HOOKS['add_javascript']['xivo'][] = 'js/xivo/cti.js';
+        $PLUGIN_HOOKS['add_javascript']['xivo'][] = 'js/store2.min.js';
+        $PLUGIN_HOOKS['add_javascript']['xivo'][] = 'js/sessionStorageTabs.js';
+        $PLUGIN_HOOKS['add_javascript']['xivo'][] = 'js/xuc.js';
+        $PLUGIN_HOOKS['add_javascript']['xivo'][] = 'js/app.js.php';
+    }
 
-   // standard hooks
-   $PLUGIN_HOOKS['item_purge']['xivo'] = [
-      'Phone' => ['PluginXivoPhone', 'phonePurged']
-   ];
+    // standard hooks
+    $PLUGIN_HOOKS['pre_item_purge']['xivo'] = [
+        'Phone' => ['PluginXivoPhone', 'phonePurged'],
+        'Line' => ['PluginXivoLine', 'linePurged'],
+    ];
 
-   // display autoinventory in phones
-   $PLUGIN_HOOKS['autoinventory_information']['xivo'] = [
-      'Phone' =>  ['PluginXivoPhone', 'displayAutoInventory'],
-   ];
+    // display autoinventory in phones
+    $PLUGIN_HOOKS['autoinventory_information']['xivo'] = [
+        'Phone' => ['PluginXivoPhone', 'displayAutoInventory'],
+    ];
 }
 
 
@@ -119,36 +127,37 @@ function plugin_init_xivo() {
  *
  * @return array
  */
-function plugin_version_xivo() {
-
-   return [
-      'name'           => 'xivo',
-      'version'        => PLUGIN_XIVO_VERSION,
-      'author'         => '<a href="http://www.teclib.com">Teclib\'</a>',
-      'license'        => '',
-      'homepage'       => '',
-      'requirements'   => [
-         'glpi' => [
-            'min' => PLUGIN_XIVO_MIN_GLPI,
-            'max' => PLUGIN_XIVO_MAX_GLPI,
-         ]
-      ]
-   ];
+function plugin_version_xivo()
+{
+    return [
+        'name' => 'xivo',
+        'version' => PLUGIN_XIVO_VERSION,
+        'author' => '<a href="http://www.teclib.com">Teclib\'</a>',
+        'license' => '',
+        'homepage' => '',
+        'requirements' => [
+            'glpi' => [
+                'min' => PLUGIN_XIVO_MIN_GLPI,
+                'max' => PLUGIN_XIVO_MAX_GLPI,
+            ]
+        ]
+    ];
 }
 
 
-function plugin_xivo_recursive_remove_empty($haystack) {
-   foreach ($haystack as $key => $value) {
-      if (is_array($value)) {
-         if (count($value) == 0) {
+function plugin_xivo_recursive_remove_empty($haystack)
+{
+    foreach ($haystack as $key => $value) {
+        if (is_array($value)) {
+            if (count($value) == 0) {
+                unset($haystack[$key]);
+            } else {
+                $haystack[$key] = plugin_xivo_recursive_remove_empty($haystack[$key]);
+            }
+        } elseif ($haystack[$key] === "") {
             unset($haystack[$key]);
-         } else {
-            $haystack[$key] = plugin_xivo_recursive_remove_empty($haystack[$key]);
-         }
-      } else if ($haystack[$key] === "") {
-         unset($haystack[$key]);
-      }
-   }
+        }
+    }
 
-   return $haystack;
+    return $haystack;
 }

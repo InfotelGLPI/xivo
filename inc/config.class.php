@@ -32,9 +32,11 @@ if (!defined('GLPI_ROOT')) {
     die("Sorry. You can't access directly to this file");
 }
 
-class PluginXivoConfig extends Config {
+class PluginXivoConfig extends Config
+{
 
-    static function getTypeName($nb = 0) {
+    static function getTypeName($nb = 0)
+    {
         return __('Xivo', 'xivo');
     }
 
@@ -43,11 +45,13 @@ class PluginXivoConfig extends Config {
      *
      * @return array config with keys => values
      */
-    static function getConfig() {
+    static function getConfig()
+    {
         return Config::getConfigurationValues('plugin:xivo');
     }
 
-    function getTabNameForItem(CommonGLPI $item, $withtemplate = 0) {
+    function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
+    {
         switch ($item->getType()) {
             case "Config":
                 return self::createTabEntry(self::getTypeName());
@@ -55,7 +59,8 @@ class PluginXivoConfig extends Config {
         return '';
     }
 
-    static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0) {
+    static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
+    {
         switch ($item->getType()) {
             case "Config":
                 return self::showForConfig($item, $withtemplate);
@@ -64,7 +69,8 @@ class PluginXivoConfig extends Config {
         return true;
     }
 
-    static function showForConfig(Config $config, $withtemplate = 0) {
+    static function showForConfig(Config $config, $withtemplate = 0)
+    {
         global $CFG_GLPI;
 
         if (!self::canView()) {
@@ -72,21 +78,21 @@ class PluginXivoConfig extends Config {
         }
 
         $current_config = self::getConfig();
-        $canedit        = Session::haveRight(self::$rightname, UPDATE);
+        $canedit = Session::haveRight(self::$rightname, UPDATE);
         echo "<div class='xivo_config'>";
         if ($canedit) {
-            echo "<form name='form' action='".Toolbox::getItemTypeFormURL("Config")."' method='post'>";
+            echo "<form name='form' action='" . Toolbox::getItemTypeFormURL("Config") . "' method='post'>";
         }
 
-        echo "<h1>".__("Configuration of XIVO integration", 'xivo')."</h1>";
+        echo "<h1>" . __("Configuration of XIVO integration", 'xivo') . "</h1>";
 
         echo "<div>";
         echo self::showField([
             'inputtype' => 'yesno',
-            'label'     => __("XUC integration (click2call, presence, etc)", 'xivo'),
-            'attrs'     => [
-                'name'      => 'enable_xuc',
-                'value'     => $current_config['enable_xuc'],
+            'label' => __("XUC integration (click2call, presence, etc)", 'xivo'),
+            'attrs' => [
+                'name' => 'enable_xuc',
+                'value' => $current_config['enable_xuc'],
                 'on_change' => '$("#xuc_config").toggleFromValue(this.value);',
             ]
         ]);
@@ -101,37 +107,37 @@ class PluginXivoConfig extends Config {
         echo self::showField([
             'label' => __("XUC url (with port)", 'xivo'),
             'attrs' => [
-                'name'         => 'xuc_url',
-                'value'        => $current_config['xuc_url'],
-                'placeholder'  => 'https://xup_ip:8090',
-                'class'        => "is_required xivo_input",
+                'name' => 'xuc_url',
+                'value' => $current_config['xuc_url'],
+                'placeholder' => 'https://xup_ip:8090',
+                'class' => "is_required xivo_input",
             ]
         ]);
         echo self::showField([
             'inputtype' => 'yesno',
-            'label'     => __("Secure connection to WebSocket", 'xivo'),
-            'attrs'     => [
-                'name'  => 'xuc_secure',
+            'label' => __("Secure connection to WebSocket", 'xivo'),
+            'attrs' => [
+                'name' => 'xuc_secure',
                 'value' => $current_config['xuc_secure'],
             ]
         ]);
         echo self::showField([
             'inputtype' => 'yesno',
-            'label'     => __("Enable for Self-service users", 'xivo'),
-            'attrs'     => [
-                'name'      => 'enable_xuc_selfservice',
-                'value'     => $current_config['enable_xuc_selfservice'],
+            'label' => __("Enable for Self-service users", 'xivo'),
+            'attrs' => [
+                'name' => 'enable_xuc_selfservice',
+                'value' => $current_config['enable_xuc_selfservice'],
             ]
         ]);
 
         echo "<div class='xivo_config_block inline_fields sub_config'>";
-        echo "<h5>".__("Features")."</h5>";
+        echo "<h5>" . __("Features") . "</h5>";
         echo self::showField([
             'inputtype' => 'yesno',
             'width' => '80px',
-            'label'     => __("Click2call", 'xivo'),
-            'attrs'     => [
-                'name'  => 'enable_click2call',
+            'label' => __("Click2call", 'xivo'),
+            'attrs' => [
+                'name' => 'enable_click2call',
                 'value' => $current_config['enable_click2call'],
             ]
         ]);
@@ -140,9 +146,9 @@ class PluginXivoConfig extends Config {
             echo self::showField([
                 'inputtype' => 'yesno',
                 'width' => '80px',
-                'label'     => __("Presence", 'xivo'),
-                'attrs'     => [
-                    'name'  => 'enable_presence',
+                'label' => __("Presence", 'xivo'),
+                'attrs' => [
+                    'name' => 'enable_presence',
                     'value' => $current_config['enable_presence'],
                 ]
             ]);
@@ -152,9 +158,9 @@ class PluginXivoConfig extends Config {
             echo self::showField([
                 'inputtype' => 'yesno',
                 'width' => '80px',
-                'label'     => __("Callcenter features", 'xivo'),
-                'attrs'     => [
-                    'name'  => 'enable_callcenter',
+                'label' => __("Callcenter features", 'xivo'),
+                'attrs' => [
+                    'name' => 'enable_callcenter',
                     'value' => $current_config['enable_callcenter'],
                 ]
             ]);
@@ -163,27 +169,27 @@ class PluginXivoConfig extends Config {
         echo self::showField([
             'inputtype' => 'yesno',
             'width' => '200px',
-            'label'     => __("Auto-open user/ticket on call", 'xivo'),
-            'attrs'     => [
-                'name'  => 'enable_auto_open',
+            'label' => __("Auto-open user/ticket on call", 'xivo'),
+            'attrs' => [
+                'name' => 'enable_auto_open',
                 'value' => $current_config['enable_auto_open'],
             ]
         ]);
         echo self::showField([
             'inputtype' => 'yesno',
             'width' => '200px',
-            'label'     => __("Auto-open in new window", 'xivo'),
-            'attrs'     => [
-                'name'  => 'auto_open_blank',
+            'label' => __("Auto-open in new window", 'xivo'),
+            'attrs' => [
+                'name' => 'auto_open_blank',
                 'value' => $current_config['auto_open_blank'],
             ]
         ]);
         echo self::showField([
             'inputtype' => 'yesno',
             'width' => '200px',
-            'label'     => __("Keep xuc session", 'xivo'),
-            'attrs'     => [
-                'name'  => 'xuc_local_store',
+            'label' => __("Keep xuc session", 'xivo'),
+            'attrs' => [
+                'name' => 'xuc_local_store',
                 'value' => $current_config['xuc_local_store'],
             ]
         ]);
@@ -195,10 +201,10 @@ class PluginXivoConfig extends Config {
         echo "<div>";
         echo self::showField([
             'inputtype' => 'yesno',
-            'label'     => __("Import assets into GLPI inventory", 'xivo'),
-            'attrs'     => [
-                'name'      => 'import_assets',
-                'value'     => $current_config['import_assets'],
+            'label' => __("Import assets into GLPI inventory", 'xivo'),
+            'attrs' => [
+                'name' => 'import_assets',
+                'value' => $current_config['import_assets'],
                 'on_change' => '$("#import_assets").toggleFromValue(this.value);'
             ]
         ]);
@@ -214,19 +220,19 @@ class PluginXivoConfig extends Config {
             'label' => __("API REST url", 'xivo'),
             'width' => '300px',
             'attrs' => [
-                'name'        => 'api_url',
-                'value'       => $current_config['api_url'],
+                'name' => 'api_url',
+                'value' => $current_config['api_url'],
                 'placeholder' => 'https://...',
-                'class'     => "is_required xivo_input",
+                'class' => "is_required xivo_input",
                 'style' => 'width:285px;',
             ]
         ]);
         echo self::showField([
             'inputtype' => 'yesno',
-            'width'     => '120px',
-            'label'     => __("Check certificate"),
-            'attrs'     => [
-                'name'  => 'api_ssl_check',
+            'width' => '120px',
+            'label' => __("Check certificate"),
+            'attrs' => [
+                'name' => 'api_ssl_check',
                 'value' => $current_config['api_ssl_check']
             ]
         ]);
@@ -238,21 +244,21 @@ class PluginXivoConfig extends Config {
             'label' => __("Login"),
             'width' => '150px',
             'attrs' => [
-                'name'  => 'api_username',
+                'name' => 'api_username',
                 'value' => $current_config['api_username'],
-                'class'     => "is_required xivo_input",
+                'class' => "is_required xivo_input",
                 'style' => 'width:90%;',
 
             ]
         ]);
         echo self::showField([
             'inputtype' => 'password',
-            'width'     => '150px',
-            'label'     => __("Password"),
-            'attrs'     => [
-                'name'  => 'api_password',
+            'width' => '150px',
+            'label' => __("Password"),
+            'attrs' => [
+                'name' => 'api_password',
                 'value' => $current_config['api_password'],
-                'class'     => "is_required xivo_input",
+                'class' => "is_required xivo_input",
                 'style' => 'width:90%;',
             ]
         ]);
@@ -261,18 +267,18 @@ class PluginXivoConfig extends Config {
 
         echo self::showField([
             'inputtype' => 'dropdown',
-            'itemtype'  => 'Entity',
-            'label'     => __("Default entity"),
+            'itemtype' => 'Entity',
+            'label' => __("Default entity"),
             'attrs' => [
-                'name'  => 'default_entity',
+                'name' => 'default_entity',
                 'value' => $current_config['default_entity'],
             ]
         ]);
         echo self::showField([
             'inputtype' => 'yesno',
-            'label'     => __("Import phones", 'xivo'),
-            'attrs'     => [
-                'name'  => 'import_phones',
+            'label' => __("Import phones", 'xivo'),
+            'attrs' => [
+                'name' => 'import_phones',
                 'value' => $current_config['import_phones'],
                 'on_change' => '$("#import_phones").toggleFromValue(this.value);',
             ]
@@ -282,31 +288,31 @@ class PluginXivoConfig extends Config {
             $style = "display: none;";
         }
         echo "<div id='import_phones' class='xivo_config_block inline_fields sub_config' style='$style'>";
-        echo "<p>".__('Also import phones with', 'xivo')."</p>";
+        echo "<p>" . __('Also import phones with', 'xivo') . "</p>";
         echo self::showField([
             'inputtype' => 'yesno',
-            'width'     => '100px',
-            'label'     => __("empty serial", 'xivo'),
-            'attrs'     => [
-                'name'  => 'import_empty_sn',
+            'width' => '100px',
+            'label' => __("empty serial", 'xivo'),
+            'attrs' => [
+                'name' => 'import_empty_sn',
                 'value' => $current_config['import_empty_sn'],
             ]
         ]);
         echo self::showField([
             'inputtype' => 'yesno',
-            'width'     => '100px',
-            'label'     => __("empty mac", 'xivo'),
-            'attrs'     => [
-                'name'  => 'import_empty_mac',
+            'width' => '100px',
+            'label' => __("empty mac", 'xivo'),
+            'attrs' => [
+                'name' => 'import_empty_mac',
                 'value' => $current_config['import_empty_mac'],
             ]
         ]);
         echo self::showField([
             'inputtype' => 'yesno',
-            'width'     => '200px',
-            'label'     => __("'not_configured' state", 'xivo'),
-            'attrs'     => [
-                'name'  => 'import_notconfig',
+            'width' => '200px',
+            'label' => __("'not_configured' state", 'xivo'),
+            'attrs' => [
+                'name' => 'import_notconfig',
                 'value' => $current_config['import_notconfig'],
             ]
         ]);
@@ -315,9 +321,9 @@ class PluginXivoConfig extends Config {
 
         echo self::showField([
             'inputtype' => 'yesno',
-            'label'     => __("Import lines", 'xivo'),
-            'attrs'     => [
-                'name'  => 'import_lines',
+            'label' => __("Import lines", 'xivo'),
+            'attrs' => [
+                'name' => 'import_lines',
                 'value' => $current_config['import_lines'],
                 'on_change' => '$("#import_lines").toggleFromValue(this.value);',
             ]
@@ -329,16 +335,16 @@ class PluginXivoConfig extends Config {
         echo "<div id='import_lines' class='xivo_config_block sub_config' style='$style'>";
         echo self::showField([
             'inputtype' => 'yesno',
-            'label'     => __("Import phones-lines relation", 'xivo'),
-            'attrs'     => [
-                'name'  => 'import_phonelines',
+            'label' => __("Import phones-lines relation", 'xivo'),
+            'attrs' => [
+                'name' => 'import_phonelines',
                 'value' => $current_config['import_phonelines'],
             ]
         ]);
         echo "</div>";
 
         if (self::isValid()) {
-            echo Html::link(__("Force synchronization"), self::getFormURL()."?forcesync");
+            echo Html::link(__("Force synchronization"), self::getFormURL() . "?forcesync");
         }
 
         echo "</div>";
@@ -354,49 +360,51 @@ class PluginXivoConfig extends Config {
         Html::closeForm();
 
         if (self::isValid()) {
-            echo "<h1>".__("REST API status", 'xivo')."</h1>";
-            $apiclient    = new PluginXivoAPIClient;
+            echo "<h1>" . __("REST API status", 'xivo') . "</h1>";
+            $apiclient = new PluginXivoAPIClient;
             $data_connect = $apiclient->connect();
-            $all_status   = $apiclient->status();
+            $all_status = $apiclient->status();
 
-            echo "<ul>";
-            $error = false;
-            foreach ($all_status as $status_label => $status) {
-                $color_png = "greenbutton.png";
-                if (!$status) {
-                    $color_png = "redbutton.png";
-                    $error = true;
-                }
-                echo "<li>";
-                echo Html::image($CFG_GLPI['root_doc']."/pics/$color_png");
-                echo "&nbsp;".$status_label;
-                echo "</li>";
-            }
-            echo "</ul>";
-
-            if ($error) {
-                echo "<h1>".__("Last Error", 'xivo')."</h1>";
-                $error = $apiclient->getLastError();
-                echo $error['exception'];
-            }
-
-            if ($_SESSION['glpi_use_mode'] == Session::DEBUG_MODE) {
-                echo "<h1>".__("DEBUG")."</h1>";
-
-                // display token
-                if (isset($data_connect['data']['token'])) {
-                    echo "<h2>".__("Auth token", 'xivo')."</h2>";
-                    echo $data_connect['data']['token'];
-                }
-
-                // display acl
-                if (isset($data_connect['data']['acls'])) {
-                    echo "<h2>".__("ACL", 'xivo')." (".count($data_connect['data']['acls']).")</h2>";
-                    echo "<ul>";
-                    foreach ($data_connect['data']['acls'] as $right) {
-                        echo "<li>$right</li>";
+            if ($all_status != false) {
+                echo "<ul>";
+                $error = false;
+                foreach ($all_status as $status_label => $status) {
+                    $color_png = "greenbutton.png";
+                    if (!$status) {
+                        $color_png = "redbutton.png";
+                        $error = true;
                     }
-                    echo "</ul>";
+                    echo "<li>";
+                    echo Html::image($CFG_GLPI['root_doc'] . "/pics/$color_png");
+                    echo "&nbsp;" . $status_label;
+                    echo "</li>";
+                }
+                echo "</ul>";
+
+                if ($error) {
+                    echo "<h1>" . __("Last Error", 'xivo') . "</h1>";
+                    $error = $apiclient->getLastError();
+                    echo $error['exception'];
+                }
+
+                if ($_SESSION['glpi_use_mode'] == Session::DEBUG_MODE) {
+                    echo "<h1>" . __("DEBUG") . "</h1>";
+
+                    // display token
+                    if (isset($data_connect['data']['token'])) {
+                        echo "<h2>" . __("Auth token", 'xivo') . "</h2>";
+                        echo $data_connect['data']['token'];
+                    }
+
+                    // display acl
+                    if (isset($data_connect['data']['acls'])) {
+                        echo "<h2>" . __("ACL", 'xivo') . " (" . count($data_connect['data']['acls']) . ")</h2>";
+                        echo "<ul>";
+                        foreach ($data_connect['data']['acls'] as $right) {
+                            echo "<li>$right</li>";
+                        }
+                        echo "</ul>";
+                    }
                 }
             }
         }
@@ -407,7 +415,7 @@ class PluginXivoConfig extends Config {
      * Show a single config field
      * Generic method who call the different GLPI function to display a field
      *
-     * @param  array  $options a list of options:
+     * @param array $options a list of options:
      *                            - inputtype (string), can be
      *                               * text
      *                               * password
@@ -418,87 +426,92 @@ class PluginXivoConfig extends Config {
      *                            - attrs, an array containing html attributes
      * @return string the html
      */
-    static function showField($options = []) {
-        $rand            = mt_rand();
+    static function showField($options = [])
+    {
+        $rand = mt_rand();
         $default_options = [
             'inputtype' => 'text',
-            'itemtype'  => '',
-            'label'     => '',
-            'attrs'     => [
-                'name'        => '',
-                'value'       => '',
+            'itemtype' => '',
+            'label' => '',
+            'attrs' => [
+                'name' => '',
+                'value' => '',
                 'placeholder' => '',
-                'style'       => 'width:50%;',
-                'id'          => "xivoconfig_field_$rand",
-                'class'       => 'xivo_input',
-                'on_change'   => ''
+                'style' => 'width:50%;',
+                'id' => "xivoconfig_field_$rand",
+                'class' => 'xivo_input',
+                'on_change' => ''
             ]
         ];
         $options = array_replace_recursive($default_options, $options);
 
-        $out   = "";
+        $out = "";
         $width = "";
         if (isset($options['width'])) {
-            $width = "style='width: ".$options['width']."'";
+            $width = "style='width: " . $options['width'] . "'";
         }
 
 
-        if($options['inputtype'] == 'dropdown'){
-            $out.= "<div class='xivo_field dropdown_xivo' $width>";
-
-        }else{
-            $out.= "<div class='xivo_field' $width>";
-
+        if ($options['inputtype'] == 'dropdown') {
+            $out .= "<div class='xivo_field dropdown_xivo' $width>";
+        } else {
+            $out .= "<div class='xivo_field' $width>";
         }
 
         // call the field according to its type
         switch ($options['inputtype']) {
             default:
             case 'text':
-                $out.= Html::input('fakefield', ['style' => 'display:none;']);
-                $out.= Html::input($options['attrs']['name'], $options['attrs']);
+                $out .= Html::input('fakefield', ['style' => 'display:none;']);
+                $out .= Html::input($options['attrs']['name'], $options['attrs']);
                 break;
 
             case 'password':
-                $out.=  "<input type='password' name='fakefield' style='display:none;'>";
-                $out.=  "<input type='password'";
+                $out .= "<input type='password' name='fakefield' style='display:none;'>";
+                $out .= "<input type='password'";
                 foreach ($options['attrs'] as $key => $value) {
-                    $out.= "$key='$value' ";
+                    $out .= "$key='$value' ";
                 }
-                $out.= ">";
+                $out .= ">";
                 break;
 
             case 'yesno':
                 $options['attrs']['display'] = false;
-                $out.= Dropdown::showYesNo($options['attrs']['name'], $options['attrs']['value'], -1, $options['attrs']);
+                $out .= Dropdown::showYesNo(
+                    $options['attrs']['name'],
+                    $options['attrs']['value'],
+                    -1,
+                    $options['attrs']
+                );
                 break;
 
             case 'dropdown':
                 $options['attrs']['display'] = false;
-                $out.= Dropdown::show($options['itemtype'], $options['attrs']);
+                $out .= Dropdown::show($options['itemtype'], $options['attrs']);
                 break;
         }
-        if($options['inputtype'] == 'dropdown'){
-            $out.= "<label class='xivo_label xivo_label_dropdown' for='{$options['attrs']['id']}'>
+        if ($options['inputtype'] == 'dropdown') {
+            $out .= "<label class='xivo_label xivo_label_dropdown' for='{$options['attrs']['id']}'>
               {$options['label']}</label>";
-        }else{
-            $out.= "<label class='xivo_label' for='{$options['attrs']['id']}'>
+        } else {
+            $out .= "<label class='xivo_label' for='{$options['attrs']['id']}'>
               {$options['label']}</label>";
         }
 
-        $out.= "</div>";
+        $out .= "</div>";
 
         return $out;
     }
 
     /**
      * Check if current saved config is valid
-     * @param  boolean $with_api also check api status
+     * @param boolean $with_api also check api status
      * @return boolean
      */
-    static function isValid($with_api = false) {
+    static function isValid($with_api = false)
+    {
         $current_config = self::getConfig();
-        $valid_config =  (!empty($current_config['api_url'])
+        $valid_config = (!empty($current_config['api_url'])
             && !empty($current_config['api_username'])
             && !empty($current_config['api_password']));
 
@@ -519,7 +532,8 @@ class PluginXivoConfig extends Config {
      * @param Migration $migration
      * @return boolean True on success
      */
-    static function install(Migration $migration) {
+    static function install(Migration $migration)
+    {
         $current_config = self::getConfig();
 
         // migrate from old versions
@@ -534,31 +548,33 @@ class PluginXivoConfig extends Config {
         }
 
         // fill config table with default values if missing
-        foreach ([
-                     // api access
-                     'import_assets'          => 0,
-                     'import_phones'          => 0,
-                     'import_lines'           => 0,
-                     'import_phonelines'      => 0,
-                     'api_url'                => '',
-                     'api_username'           => '',
-                     'api_password'           => '',
-                     'api_ssl_check'          => 1,
-                     'import_empty_sn'        => 0,
-                     'import_empty_mac'       => 0,
-                     'import_notconfig'       => 0,
-                     'default_entity'         => 0,
-                     'enable_xuc'             => 0,
-                     'enable_xuc_selfservice' => 0,
-                     'xuc_url'                => '',
-                     'xuc_secure'             => 0,
-                     'enable_click2call'      => 0,
-                     'enable_presence'        => 0,
-                     'enable_auto_open'       => 0,
-                     'enable_callcenter'      => 0,
-                     'auto_open_blank'        => 1,
-                     'xuc_local_store'        => 1,
-                 ] as $key => $value) {
+        foreach (
+            [
+                // api access
+                'import_assets' => 0,
+                'import_phones' => 0,
+                'import_lines' => 0,
+                'import_phonelines' => 0,
+                'api_url' => '',
+                'api_username' => '',
+                'api_password' => '',
+                'api_ssl_check' => 1,
+                'import_empty_sn' => 0,
+                'import_empty_mac' => 0,
+                'import_notconfig' => 0,
+                'default_entity' => 0,
+                'enable_xuc' => 0,
+                'enable_xuc_selfservice' => 0,
+                'xuc_url' => '',
+                'xuc_secure' => 0,
+                'enable_click2call' => 0,
+                'enable_presence' => 0,
+                'enable_auto_open' => 0,
+                'enable_callcenter' => 0,
+                'auto_open_blank' => 1,
+                'xuc_local_store' => 1,
+            ] as $key => $value
+        ) {
             if (!isset($current_config[$key])) {
                 Config::setConfigurationValues('plugin:xivo', [$key => $value]);
             }
@@ -570,7 +586,8 @@ class PluginXivoConfig extends Config {
      *
      * @return boolean True on success
      */
-    static function uninstall() {
+    static function uninstall()
+    {
         $config = new Config();
         $config->deleteByCriteria(['context' => 'plugin:xivo']);
 

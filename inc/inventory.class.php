@@ -126,11 +126,13 @@ class PluginXivoInventory extends CommonGLPI {
             unset($phones[$index]);
             continue;
          }
+
          if (!$xivoconfig['import_empty_mac']
              && empty($phone['mac'])) {
             unset($phones[$index]);
             continue;
          }
+
          if (!$xivoconfig['import_notconfig']
              && $phone['status'] == self::NOT_CONFIGURED) {
             unset($phones[$index]);
